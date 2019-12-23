@@ -1,27 +1,17 @@
 let express = require('express');
+let bodyParser= require('body-parser');
+
 let app = express();
 let port = process.env.PORT || 3000;
-let help = require('./app/handlers/first.help');
-let first = require('./app/handlers/first');
-let root = require('./app/handlers/general');
 
 module.exports = app;
 
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
+
 
 // General
-
-app.get('/', root.main);
-
-// Help
-
-app.get('/api/v1/first/help', help.calc);
-app.post('/api/v1/first/help', help.strManipulate);
-
-// First
-
-app.get('/api/v1/first/:param1', first.calc);
-app.post('/api/v1/first/:firstParam', first.strManipulate);
+require('./app/router')(app);
 
 app.listen(port, (err) => {
     if (err) {

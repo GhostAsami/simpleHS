@@ -51,4 +51,3 @@ exports.findCommonSymb = function (firstStr, secondStr) {
     }
     return res;
 }
-
