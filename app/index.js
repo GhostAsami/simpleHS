@@ -11,9 +11,9 @@ const validators = require('./validators');
 let builtHandlers = {};
 
 getGlobbedFiles(path.join(__dirname, './handlers/*.js'))
-.forEach(path => {
-  let handler = require(path)(helpers, validators);
-  builtHandlers[handler.name] = handler;
-});
+  .forEach(path => {
+    let handler = require(path)(helpers, validators);
+    builtHandlers[handler.name] = handler;
+  });
 // Экспортируем подключенные обработчики
 module.exports = builtHandlers;

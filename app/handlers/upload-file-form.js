@@ -1,6 +1,9 @@
 module.exports = (helpers, validators) => {
-  return function uploadFileForm (req,res) {
-  res.end(`
+  return function uploadFileForm(req, res) {
+    res.end(`
+  <head>
+  <meta charset="UTF-8">
+  </head>  
   <form id        =  "uploadForm"
      enctype   =  "multipart/form-data"
      action    =  "/api/uploadfile"
@@ -10,5 +13,5 @@ module.exports = (helpers, validators) => {
   <input type="submit" value="Upload File" name="submit">
   </form>
   `);
-};
+  };
 }

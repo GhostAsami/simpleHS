@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const glob = require('glob');
 
-module.exports = function(globPatterns, removeRoot) {
+module.exports = function (globPatterns, removeRoot) {
   // For context switching
   var _this = this;
 
@@ -15,18 +15,18 @@ module.exports = function(globPatterns, removeRoot) {
 
   // If glob pattern is array so we use each pattern in a recursive way, otherwise we use glob
   if (_.isArray(globPatterns)) {
-    globPatterns.forEach(function(globPattern) {
+    globPatterns.forEach(function (globPattern) {
       output = _.union(output, _this.getGlobbedFiles(globPattern, removeRoot));
     });
   } else if (_.isString(globPatterns)) {
-    if (urlRegex.test(globPatterns)) {  
+    if (urlRegex.test(globPatterns)) {
       output.push(globPatterns);
     } else {
 
       let files = glob(globPatterns, { sync: true });
 
       if (removeRoot) {
-        files = files.map(function(file) {
+        files = files.map(function (file) {
           return file.replace(removeRoot, '');
         });
       }
@@ -34,7 +34,7 @@ module.exports = function(globPatterns, removeRoot) {
 
       // and for `gen`
       var genPrefix = './gen/';
-      let genFiles = glob(genPrefix + globPatterns, { sync: true }).map(function(file) {
+      let genFiles = glob(genPrefix + globPatterns, { sync: true }).map(function (file) {
         return file.replace(genPrefix + removeRoot, '');
       });
       output = _.union(output, genFiles);
