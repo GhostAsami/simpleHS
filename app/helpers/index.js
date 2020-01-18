@@ -1,7 +1,6 @@
 const multer = require('multer');
 const crypto = require('crypto');
 const fs = require('fs');
-var iconv = require('iconv-lite');
 
 exports.add = function (x, y) {
   return x + y;
@@ -57,53 +56,57 @@ exports.findCommonSymb = function (firstStr, secondStr) {
   return res;
 }
 
+function saveFile() {
+  fs.mkdir('./uploads', function (err) {
+    if (err && err.code !== 'EEXIST') {
+      console.log(err.stack);
+    } else {
+      return './uploads';
+    }
+  })
+}
+
+function fileNameGen(fileName) {
+  let split = '.';
+  let finalName = '';
+  let splitBeforeHash = '_';
+  let randBytes = 10;
+
+  let nameArr = fileName.split(split);
+  let hash = crypto.randomBytes(randBytes).toString('hex');
+
+  // Если файл без расширения
+  if (nameArr.length === 1) {
+    finalName = fileName + splitBeforeHash + hash;
+  }
+
+  // Если файл с расширением
+  if (nameArr.length > 1) {
+    finalName = nameArr[0];
+    for (i = 1; i < nameArr.length; i++) {
+      if (i === nameArr.length - 1) {
+        finalName += splitBeforeHash + hash + split + nameArr[i];
+      } else {
+        finalName += split + nameArr[i];
+      }
+    }
+  }
+
+  fileName = finalName.toString();
+  exports.upfile = fileName;
+  return fileName;
+}
+
 function makeStorage(file) {
   let storage;
 
   try {
     storage = multer.diskStorage({
 
-      destination: function (req, file, callback) {
-        fs.mkdir('./uploads', function (err) {
-          if (err && err.code !== 'EEXIST') {
-            console.log(err.stack);
-          } else {
-            callback(null, './uploads');
-          }
-        })
-      },
+      destination: saveFile(),
 
       filename: function (req, file, callback) {
-        (function () {
-          let split = '.';
-          let finalName = '';
-          let splitBeforeHash = '_';
-          let randBytes = 10;
-          
-          let nameArr = file.originalname.split(split);
-          let hash = crypto.randomBytes(randBytes).toString('hex');
-
-          // Если файл без расширения
-          if (nameArr.length === 1) {
-            finalName = file.originalname + splitBeforeHash + hash;
-          }
-
-          // Если файл с расширением
-          if (nameArr.length > 1) {
-            finalName = nameArr[0];
-            for (i = 1; i < nameArr.length; i++) {
-              if (i === nameArr.length - 1) {
-                finalName += splitBeforeHash + hash + split + nameArr[i];
-              } else {
-                finalName += split + nameArr[i];
-              }
-            }
-          }
-
-          file.originalname = finalName.toString();
-          exports.upfile = file.originalname;
-        })(),
-          callback(null, file.originalname)
+        callback(null, fileNameGen(file.originalname))
       }
     });
   } catch (err) { console.log(err.stack); }
